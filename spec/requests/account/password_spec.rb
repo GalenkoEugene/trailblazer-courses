@@ -8,10 +8,11 @@ RSpec.describe 'Account::Password', :dox, type: :request do
 
     let(:old_password) { 'Password1!' }
     let(:user) { create(:user, password: old_password) }
-    let(:headers) { { Authorization: "{ \"user_id\": #{user.id} }" } }
+    let(:headers) { authorization_header_for(user) }
     let(:params) { { old_password: old_password, password: 'Password2@', password_confirmation: 'Password2@' } }
 
     before do
+      allow(Rails).to receive_message_chain(:cache, :delete).with(auth_token_key_for(user))
       put '/account/password', params: params, headers: headers, as: :json
     end
 

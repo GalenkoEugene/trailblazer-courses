@@ -10,10 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_21_135714) do
+ActiveRecord::Schema.define(version: 2019_03_09_183611) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "user_invitations", force: :cascade do |t|
+    t.string "email", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email"

@@ -8,4 +8,8 @@ FactoryBot.define do
     last_name { FFaker::Name.last_name }
     is_admin { false }
   end
+
+  trait :admin do
+    is_admin { true }
+  end
 end

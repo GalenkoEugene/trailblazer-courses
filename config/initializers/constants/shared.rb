@@ -3,6 +3,6 @@
 module Constants
   module Shared
     PASSWORD_REGEX = %r{(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!\$%&,\(\)\*\+-\.\/;:<=>?\[\\\]\^_{|}~#"@]+}i.freeze
-    PASSWORD_MIN_LENGTH = 8
+    PASSWORD_MIN_LENGTH = 6
   end
 end

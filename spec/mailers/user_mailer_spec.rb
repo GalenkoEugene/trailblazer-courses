@@ -27,4 +27,21 @@ RSpec.describe UserMailer, type: :mailer do
       expect(mail.body.encoded).to include(link)
     end
   end
+
+  describe '.invite_user' do
+    let(:mail) do
+      described_class.invite_user(user, token)
+    end
+
+    let(:token) { Service::JWTAdapter.encode(aud: 'user_invitation', sub: user.id, exp: 1.day.from_now.to_i) }
+    let(:link) { "#{Rails.application.config.client_url}/user_invitation?token=#{token}" }
+
+    it_behaves_like 'mail with correct headers' do
+      let(:mail_subject) { I18n.t('user_mailer.invite_user.subject') }
+    end
+
+    it 'renders the body with invitation link' do
+      expect(mail.body.encoded).to include(link)
+    end
+  end
 end

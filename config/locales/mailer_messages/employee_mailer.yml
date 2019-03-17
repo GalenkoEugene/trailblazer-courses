@@ -5,3 +5,7 @@ en:
       title: Dear User!
       message: You‘ve requested to restore your password. If you didn't request this, you can ignore this email.
       link_text: Restore Password
+    invite_user:
+      subject: Create your account
+      message: You’ve been invited to create your account. To accept this invitation please click %{link}
+      link_text: this link.

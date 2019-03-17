@@ -9,11 +9,17 @@ RSpec.describe Accounts::Passwords::Operation::Update do
   let(:current_user) { create(:user, password: old_password) }
 
   describe 'Success' do
+    let(:token) { double(:auth_token) }
     let(:params) { { old_password: old_password, password: 'Password2@', password_confirmation: 'Password2@' } }
+
+    before do
+      allow(Auth::Token::Session).to receive(:generate).with(current_user).and_return(token)
+      allow(Rails).to receive_message_chain(:cache, :delete).with(auth_token_key_for(current_user))
+    end
 
     it 'changes employee password' do
       expect { result }.to(change(current_user, :password_digest))
-      expect(result[:auth]).to eq({ user_id: current_user.id }.to_json)
+      expect(result[:auth]).to eq(token)
       expect(result).to be_success
     end
   end
@@ -23,7 +29,7 @@ RSpec.describe Accounts::Passwords::Operation::Update do
       let(:errors) do
         {
           old_password: ['must be filled'],
-          password: ['must be filled', 'size cannot be less than 8']
+          password: ['must be filled', 'size cannot be less than 6']
         }
       end
 
@@ -65,7 +71,7 @@ RSpec.describe Accounts::Passwords::Operation::Update do
 
     context 'when password is too short' do
       let(:params) { { old_password: old_password, password: 'P2@', password_confirmation: 'P2@' } }
-      let(:errors) { { password: ['size cannot be less than 8'] } }
+      let(:errors) { { password: ['size cannot be less than 6'] } }
 
       it 'has validation errors' do
         expect(result['result.contract.default'].errors.messages).to match errors

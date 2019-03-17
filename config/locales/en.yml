@@ -7,7 +7,31 @@ en:
       not_exists: User with such email doesn’t exist
     account:
       wrong_password: Wrong password
+    user_invitations:
+      already_exists: User with such email already exists
+    session:
+      validation: Email or password is incorrect
 
     rules:
       user_password:
         eql?: must match password
+      user_email:
+        filled?: Email can’t be blank
+        format?: Wrong email format
+      create_user:
+        rules:
+          first_name:
+            filled?: First Name can’t be blank
+          last_name:
+            filled?: Last Name can’t be blank
+          password:
+            filled?: Password can’t be blank
+            min_size?: Use a minimum password length of 6 or more characters
+          password_confirmation:
+            eql?: Password and password confirmation do not match
+      user_session:
+        rules:
+          email:
+            filled?: Email can’t be blank
+          password:
+            filled?: Password can’t be blank

@@ -10,19 +10,21 @@ module Authentication
   end
 
   def authorize_request!
-    @auth_payload = JSON.parse(request.headers['Authorization'] || '')
-    raise UnauthorizedError if @auth_payload['user_id'].blank?
-  rescue JSON::ParserError
-    raise UnauthorizedError
+    @auth_token = (request.headers['Authorization'] || '').split(' ').last
+    raise UnauthorizedError if auth_token.blank? || whitelisted_token.blank?
   end
 
   def current_user
-    @current_user ||= User.find_by(id: auth_payload['user_id'])
+    @current_user ||= Auth::Token::Session.find_user_by_token(auth_token)
   end
 
   private
 
-  attr_reader :auth_payload
+  attr_reader :auth_token
+
+  def whitelisted_token
+    Rails.cache.read("whitelist_user_token_#{current_user.id}")
+  end
 
   def exception_respond(status, message)
     errors = { base: [message] }

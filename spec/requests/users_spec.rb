@@ -7,7 +7,7 @@ RSpec.describe 'Users', :dox, type: :request do
     include ApiDoc::Users::Index
 
     let(:params) { { page: page } }
-    let(:headers) { { Authorization: "{ \"user_id\": #{current_user.id} }" } }
+    let(:headers) { authorization_header_for(current_user) }
     let(:current_user) { create(:user, is_admin: is_admin) }
     let(:is_admin) { true }
     let(:page) { 2 }
@@ -68,7 +68,7 @@ RSpec.describe 'Users', :dox, type: :request do
   describe 'GET #destroy' do
     include ApiDoc::Users::Index
 
-    let(:headers) { { Authorization: "{ \"user_id\": #{current_user.id} }" } }
+    let(:headers) { authorization_header_for(current_user) }
     let(:current_user) { create(:user, is_admin: is_admin) }
     let(:is_admin) { true }
     let(:target_user) { create(:user) }
@@ -110,6 +110,72 @@ RSpec.describe 'Users', :dox, type: :request do
         it 'renders errors' do
           expect(response).to be_unprocessable
           expect(response).to match_json_schema('errors')
+        end
+      end
+    end
+  end
+
+  describe 'POST #create' do
+    include ApiDoc::Users::Create
+
+    let(:user_params) { build(:user) }
+    let(:first_name) { user_params.first_name }
+    let(:last_name) { user_params.last_name }
+    let(:password) { user_params.password }
+    let(:password_confirmation) { user_params.password }
+    let(:user_invitation) { create(:user_invitation) }
+    let(:token) { Service::JWTAdapter.encode(aud: 'user_invitation', sub: user_invitation.id, exp: 1.day.from_now.to_i) }
+    let(:params) do
+      {
+        token: token,
+        first_name: first_name,
+        last_name: last_name,
+        password: password,
+        password_confirmation: password_confirmation
+      }
+     end
+
+    before { post '/users', params: params, as: :json }
+
+    describe 'Success' do
+      let(:current_user) { admin }
+
+      it 'create user by token', :dox do
+        expect(response).to be_created
+        expect(response.body).to be_empty
+      end
+    end
+
+    describe 'Fail' do
+      shared_examples 'render errors' do
+        it 'renders errors', :dox do
+          expect(response).to be_unprocessable
+          expect(response).to match_json_schema('errors')
+        end
+      end
+
+      context 'when first_name blank' do
+        it_behaves_like 'render errors' do
+          let(:first_name) { { first_name: '' } }
+        end
+      end
+
+      context 'when last_name blank' do
+        it_behaves_like 'render errors' do
+          let(:last_name) { { last_name: '' } }
+        end
+      end
+
+      context 'when password blank' do
+        it_behaves_like 'render errors' do
+          let(:password) { { password: '' } }
+        end
+      end
+
+      context 'when password confirmation does not match' do
+        it_behaves_like 'render errors' do
+          let(:password) { { password: 'Password1' } }
+          let(:password_confirmation) { { password: 'Password2' } }
         end
       end
     end

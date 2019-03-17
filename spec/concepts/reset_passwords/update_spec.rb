@@ -35,7 +35,7 @@ RSpec.describe ResetPasswords::Operation::Update do
 
     context "when password doesn't match regex" do
       let(:params) { { token: token, password: '11111111', password_confirmation: '11111111' } }
-      let(:errors) { { password: ['is in invalid format', 'size cannot be less than 8'] } }
+      let(:errors) { { password: ['is in invalid format', 'size cannot be less than 6'] } }
 
       it 'has validation errors' do
         expect(result['result.contract.default'].errors.messages).to match errors
@@ -45,7 +45,7 @@ RSpec.describe ResetPasswords::Operation::Update do
 
     context 'when password length not corresponds requirements' do
       let(:params) { { token: token, password: '1', password_confirmation: '1' } }
-      let(:errors) { { password: ['is in invalid format', 'size cannot be less than 8'] } }
+      let(:errors) { { password: ['is in invalid format', 'size cannot be less than 6'] } }
 
       it 'has validation errors' do
         expect(result['result.contract.default'].errors.messages).to match errors

@@ -5,14 +5,21 @@ class UserMailer < ApplicationMailer
 
   def reset_password(user, token)
     @user = user
-    @link = token_link(token)
+    @link = token_link(token, :reset_password)
     mail(to: @user.email,
          subject: I18n.t('user_mailer.reset_password.subject'))
   end
 
+  def invite_user(user, token)
+    @user = user
+    @link = token_link(token, :user_invitation)
+    mail(to: @user.email,
+         subject: I18n.t('user_mailer.invite_user.subject'))
+  end
+
   private
 
-  def token_link(token)
-    URI.parse("#{Rails.application.config.client_url}/reset_password?token=#{token}").to_s
+  def token_link(token, path)
+    URI.parse("#{Rails.application.config.client_url}/#{path}?token=#{token}").to_s
   end
 end

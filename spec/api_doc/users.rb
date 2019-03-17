@@ -18,5 +18,9 @@ module ApiDoc
     document :index do
       action 'Lists all users (except the admin)'
     end
+
+    document :create do
+      action 'Create user by invitation token'
+    end
   end
 end
