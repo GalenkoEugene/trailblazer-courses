@@ -90,5 +90,13 @@ RSpec.describe Users::Operation::Create do
         let(:errors) { { password_confirmation: ['Password and password confirmation do not match'] } }
       end
     end
+
+    context 'when email not unique' do
+      before { create(:user, email: user_invitation.email) }
+
+      it_behaves_like 'validation errors' do
+        let(:errors) { { email: ['Email must be unique'] } }
+      end
+    end
   end
 end

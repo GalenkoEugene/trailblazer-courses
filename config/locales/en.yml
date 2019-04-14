@@ -18,6 +18,9 @@ en:
       user_email:
         filled?: Email can’t be blank
         format?: Wrong email format
+        rules:
+          email:
+            unique?: Email must be unique
       create_user:
         rules:
           first_name:
@@ -29,6 +32,8 @@ en:
             min_size?: Use a minimum password length of 6 or more characters
           password_confirmation:
             eql?: Password and password confirmation do not match
+          email:
+            unique?: Email must be unique
       user_session:
         rules:
           email:

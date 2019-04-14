@@ -6,7 +6,7 @@ module UserInvitations::Operation
     pass Macro::Semantic(success: :created)
 
     step :check_user_existence?
-    fail :handle_user_existence
+    fail :user_existence_error
 
     step Model(UserInvitation, :new)
     step Contract::Build(constant: UserInvitations::Contract::Create)
@@ -19,7 +19,7 @@ module UserInvitations::Operation
       !User.where(email: params[:email]).exists?
     end
 
-    def handle_user_existence(ctx, **)
+    def user_existence_error(ctx, **)
       ctx[:errors] = { base: [I18n.t('errors.user_invitations.already_exists')] }
     end
 

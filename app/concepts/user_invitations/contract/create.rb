@@ -9,9 +9,16 @@ module UserInvitations::Contract
     validation do
       configure do
         config.namespace = :user_email
+
+        def unique?(value)
+          !User.exists?(email: value)
+        end
       end
 
-      required(:email).filled(format?: ResetPasswords::Contract::Create::EMAIL_REGEX)
+      required(:email).filled(
+        :str?,
+        :unique?,
+        format?: ResetPasswords::Contract::Create::EMAIL_REGEX)
     end
   end
 end

@@ -40,7 +40,7 @@ RSpec.describe UserInvitations::Operation::Create do
 
       context 'when email is empty' do
         let(:params) { { } }
-        let(:errors) { { email: ['Email can’t be blank'] } }
+        let(:errors) { { email: ['Email can’t be blank', 'Email must be unique'] } }
 
         it 'has validation errors' do
           expect(result['result.contract.default'].errors.messages).to match errors

@@ -9,7 +9,6 @@ RSpec.describe Accounts::Session::Operation::Create do
   let(:token) { double(:auth_token) }
   let(:cache_key) { auth_token_key_for(user) }
 
-
   before do
     allow(Auth::Token::Session).to receive(:generate).with(user).and_return(token)
     result
@@ -35,7 +34,6 @@ RSpec.describe Accounts::Session::Operation::Create do
         expect(result).to be_failure
       end
     end
-
 
     context 'with wrong password' do
       let(:params) { { email: user.email, password: 'invalid password' } }

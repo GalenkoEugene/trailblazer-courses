@@ -14,10 +14,14 @@ module User::Contract
     validation do
       configure do
         config.namespace = :create_user
+
+        def unique?(value)
+          !User.exists?(email: value)
+        end
       end
 
       required(:token).filled(:str?)
-      required(:email).filled(:str?)
+      required(:email).filled(:str?, :unique?)
       required(:first_name).filled(:str?)
       required(:last_name).filled(:str?)
       required(:password).filled(
