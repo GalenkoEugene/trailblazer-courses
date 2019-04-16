@@ -1,20 +1,28 @@
 # frozen_string_literal: true
 
 RSpec.describe Accounts::Passwords::Operation::Update do
-  subject(:result) { described_class.call(params: params, current_user: current_user) }
+  subject(:result) { described_class.call(params: params, payload: payload, current_user: current_user) }
 
   let(:params) { {} }
 
   let(:old_password) { 'Password1!' }
-  let(:current_user) { create(:user, password: old_password) }
+  let!(:current_user) { create(:user, password: old_password) }
+  let(:payload) { { 'user_id' => current_user.id } }
 
   describe 'Success' do
     let(:token) { double(:auth_token) }
     let(:params) { { old_password: old_password, password: 'Password2@', password_confirmation: 'Password2@' } }
 
     before do
-      allow(Auth::Token::Session).to receive(:generate).with(current_user).and_return(token)
-      allow(Rails).to receive_message_chain(:cache, :delete).with(auth_token_key_for(current_user))
+      allow(JWTSessions::Session)
+        .to receive_message_chain(:new, :login)
+        .with(payload: payload, namespace: "user-sessions-#{current_user.id}")
+        .with(no_args)
+        .and_return(token)
+      allow(JWTSessions::Session)
+        .to receive(:new)
+        .with(namespace: "user-sessions-#{current_user.id}")
+        .and_call_original
     end
 
     it 'changes employee password' do

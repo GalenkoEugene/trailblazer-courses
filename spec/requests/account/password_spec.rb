@@ -12,7 +12,6 @@ RSpec.describe 'Account::Password', :dox, type: :request do
     let(:params) { { old_password: old_password, password: 'Password2@', password_confirmation: 'Password2@' } }
 
     before do
-      allow(Rails).to receive_message_chain(:cache, :delete).with(auth_token_key_for(user))
       put '/account/password', params: params, headers: headers, as: :json
     end
 

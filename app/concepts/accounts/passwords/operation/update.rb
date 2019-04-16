@@ -28,14 +28,18 @@ module Accounts::Passwords::Operation
       ctx['contract.default'].errors.add(:base, I18n.t('errors.account.wrong_password'))
     end
 
-    def flush_all_sessions_of_employee(_ctx, model:, **)
-      Rails.cache.delete("whitelist_user_token_#{model.id}")
+    def flush_all_sessions_of_employee(_ctx, payload:, **)
+      session = JWTSessions::Session.new(namespace: "user-sessions-#{payload['user_id']}")
+      session.flush_namespaced
       true
     end
 
     def reissue_session(ctx, model:, **)
       # create a new session data to return to user
-      ctx[:auth] = Auth::Token::Session.generate(model)
+      ctx[:auth] = JWTSessions::Session.new(
+        payload: { user_id: model.id },
+        namespace: "user-sessions-#{model.id}"
+      ).login
     end
 
     def prepare_renderer(ctx, auth:, **)

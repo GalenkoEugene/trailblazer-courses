@@ -9,6 +9,7 @@ ruby '2.6.1'
 gem 'pg'
 gem 'puma'
 gem 'rails'
+gem 'redis'
 gem 'sidekiq'
 
 # Trailblazer bundle
@@ -19,6 +20,9 @@ gem 'trailblazer-rails'
 # Authentication
 gem 'bcrypt'
 gem 'jwt'
+
+# Authorization
+gem 'jwt_sessions'
 
 # Pagination
 gem 'pagy'

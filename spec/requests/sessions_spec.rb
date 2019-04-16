@@ -50,15 +50,12 @@ RSpec.describe 'Seessions', :dox, type: :request do
 
     let(:user) { create(:user) }
 
-    before do
-      allow(Rails).to receive_message_chain(:cache, :delete).with(auth_token_key_for(user))
-      delete "/account/session", headers: headers
-    end
+    before { delete "/account/session", headers: headers }
 
     describe 'Success' do
       let(:headers) { authorization_header_for(user) }
 
-      it 'remove token from whitelist' do
+      it 'flush_session' do
         expect(response).to be_no_content
         expect(response.body).to be_empty
       end

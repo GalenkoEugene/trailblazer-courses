@@ -3,4 +3,5 @@
 class ApplicationController < ActionController::API
   include Authentication
   include DefaultEndpoint
+  include JWTSessions::RailsAuthorization
 end

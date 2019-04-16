@@ -11,9 +11,7 @@ module Accounts::Session::Operation
     step :authenticate
     fail :render_errors
 
-    step :set_token!
-    step :set_whitelist_key!
-    step :whitelist_token!
+    step :login!
     step :prepare_renderer
 
     def authenticate(ctx, model:, params:, **)
@@ -24,16 +22,11 @@ module Accounts::Session::Operation
       ctx[:errors] = { base: [I18n.t('.errors.session.validation')] }
     end
 
-    def set_token!(ctx, model:, **)
-      ctx[:auth] = Auth::Token::Session.generate(model)
-    end
-
-    def set_whitelist_key!(ctx, model:, **)
-      ctx[:whitelist_key] = "whitelist_user_token_#{model.id}".freeze
-    end
-
-    def whitelist_token!(ctx, auth:, **)
-      Rails.cache.write(ctx[:whitelist_key], auth.to_s, expires_in: Auth::Token::Session::EXPIRATION_TIME)
+    def login!(ctx, model:, **)
+      ctx[:auth] = JWTSessions::Session.new(
+        payload: { user_id: model.id },
+        namespace: "user-sessions-#{model.id}"
+      ).login
     end
 
     def prepare_renderer(ctx, auth:, **)

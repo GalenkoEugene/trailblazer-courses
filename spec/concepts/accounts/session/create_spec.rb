@@ -10,7 +10,11 @@ RSpec.describe Accounts::Session::Operation::Create do
   let(:cache_key) { auth_token_key_for(user) }
 
   before do
-    allow(Auth::Token::Session).to receive(:generate).with(user).and_return(token)
+    allow(JWTSessions::Session)
+      .to receive_message_chain(:new, :login)
+      .with(payload: { user_id: user.id }, refresh_by_access_allowed: true)
+      .with(no_args)
+      .and_return(token)
     result
   end
 
@@ -20,10 +24,6 @@ RSpec.describe Accounts::Session::Operation::Create do
     it 'create session token' do
       expect(result[:auth]).to eq(token)
       expect(result).to be_success
-    end
-
-    it 'add user token to whitelist' do
-      expect(Rails.cache.read(cache_key)).to eq(token.to_s)
     end
   end
 

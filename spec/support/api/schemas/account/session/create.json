@@ -29,13 +29,67 @@
       "properties": {
         "auth": {
           "$id": "#/properties/meta/properties/auth",
-          "type": "string",
+          "type": "object",
           "title": "The Auth Schema",
-          "default": "",
-          "examples": [
-            "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJzZXNzaW9uIiwic3ViIjo0OTg1LCJleHAiOjE1NTI4NTA4ODJ9.VBKrR8nTkuMKunphYPbxyyppwJMzQ_Y_hB9ixefL-Hc"
+          "required": [
+            "csrf",
+            "access",
+            "access_expires_at",
+            "refresh",
+            "refresh_expires_at"
           ],
-          "pattern": "^(.*)$"
+          "properties": {
+            "csrf": {
+              "$id": "#/properties/meta/properties/auth/properties/csrf",
+              "type": "string",
+              "title": "The Csrf Schema",
+              "default": "",
+              "examples": [
+                "5SfP/2jBQleo06L5qZrANq0hHz74DKpdKR+CCwby8mRB5bRQYdJRHLfj4p8Wu77mC1C285JT/VfcfhgHOHD6ng=="
+              ],
+              "pattern": "^(.*)$"
+            },
+            "access": {
+              "$id": "#/properties/meta/properties/auth/properties/access",
+              "type": "string",
+              "title": "The Access Schema",
+              "default": "",
+              "examples": [
+                "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NTUyNTMwOTUsInVzZXJfaWQiOjEyNDc3LCJ1aWQiOiIyODdlZjM1Ni0xNGZlLTQxM2YtOWZhYS0xZDZkYWIxYTExMjciLCJleHAiOjE1NTUyNTMwOTUsInJ1aWQiOiI2OGY5MjAxYS1hZTNlLTQxZDItODkxMi01YWM3M2ZlNjhlMGUifQ.2MtvWjyl_HbLE0M_o0ZujmF3Wk046UZAkCP1aILLgWI"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "access_expires_at": {
+              "$id": "#/properties/meta/properties/auth/properties/access_expires_at",
+              "type": "string",
+              "title": "The Access_expires_at Schema",
+              "default": "",
+              "examples": [
+                "2019-04-14T17:44:55.000+03:00"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "refresh": {
+              "$id": "#/properties/meta/properties/auth/properties/refresh",
+              "type": "string",
+              "title": "The Refresh Schema",
+              "default": "",
+              "examples": [
+                "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NTUyNTMwOTUsInVpZCI6IjY4ZjkyMDFhLWFlM2UtNDFkMi04OTEyLTVhYzczZmU2OGUwZSIsImV4cCI6MTU1NTg1NDI5NX0.Q6lidXB_VZbrvgyI-hLDmpL8_Whe8YoB_HI0oDVqaVw"
+              ],
+              "pattern": "^(.*)$"
+            },
+            "refresh_expires_at": {
+              "$id": "#/properties/meta/properties/auth/properties/refresh_expires_at",
+              "type": "string",
+              "title": "The Refresh_expires_at Schema",
+              "default": "",
+              "examples": [
+                "2019-04-21T16:44:55.000+03:00"
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
         }
       }
     },

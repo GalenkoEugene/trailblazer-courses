@@ -2,13 +2,9 @@
 
 module Helpers
   def authorization_header_for(user)
-    auth = Auth::Token::Session.generate(user)
-    allow(Rails).to receive_message_chain(:cache, :read).with(auth_token_key_for(user)) { auth }
+    session = JWTSessions::Session.new(payload: { user_id: user.id },
+                                       refresh_by_access_allowed: true)
 
-    { Authorization: "Bearer #{auth}" }
-  end
-
-  def auth_token_key_for(user)
-    "whitelist_user_token_#{user.id}"
+    { Authorization: "Bearer #{session.login[:access]}" }
   end
 end
