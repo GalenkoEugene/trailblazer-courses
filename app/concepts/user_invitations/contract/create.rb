@@ -5,6 +5,7 @@ module UserInvitations::Contract
     feature Reform::Form::Dry
 
     property :email
+    property :url, virtual: true
 
     validation do
       configure do
@@ -15,6 +16,7 @@ module UserInvitations::Contract
         end
       end
 
+      required(:url).filled(:str?)
       required(:email).filled(
         :str?,
         :unique?,

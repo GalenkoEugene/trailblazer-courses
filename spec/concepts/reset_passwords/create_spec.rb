@@ -5,14 +5,15 @@ RSpec.describe ResetPasswords::Operation::Create do
 
   let(:token) { 'token' }
   let(:user) { create(:user) }
-  let(:params) { { email: user.email } }
+  let(:url) { 'https://url' }
+  let(:params) { { email: user.email, url: url } }
 
   describe 'Success' do
     context 'when user exists' do
       it 'creates restore password link' do
         expect(UserMailer).to receive_message_chain(
           :reset_password, :deliver_later
-        ).with(user.id, token).with(no_args).and_return(true)
+        ).with(user.id, url, token).with(no_args).and_return(true)
         expect(result[:model]).to eq(user)
         expect(result[:success_semantic]).to eq(:created)
         expect(result).to be_success
@@ -20,7 +21,7 @@ RSpec.describe ResetPasswords::Operation::Create do
     end
 
     context 'when email is not registered' do
-      let(:params) { { email: 'not@exist.com' } }
+      let(:params) { { email: 'not@exist.com', url: url } }
 
       it 'silently succeeds' do
         expect(UserMailer).not_to receive(:reset_password)
@@ -35,7 +36,7 @@ RSpec.describe ResetPasswords::Operation::Create do
 
   describe 'Failure' do
     context 'when empty params' do
-      let(:params) { {} }
+      let(:params) { { url: url } }
       let(:errors) { { email: ['must be filled'] } }
 
       it 'has validation errors' do
@@ -45,7 +46,7 @@ RSpec.describe ResetPasswords::Operation::Create do
     end
 
     context "when email doesn't match regex" do
-      let(:params) { { email: 'wrong_email' } }
+      let(:params) { { email: 'wrong_email', url: url } }
       let(:errors) { { email: ['is in invalid format'] } }
 
       it 'has validation errors' do

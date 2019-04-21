@@ -7,10 +7,11 @@ RSpec.describe UserInvitations::Operation::Create do
   let(:admin) { create(:user, :admin) }
   let(:not_admin_user) { create(:user, is_admin: false) }
   let(:user_invitation) { create(:user_invitation) }
+  let(:url) { 'https://url' }
 
   describe 'Success' do
     let(:current_user) { admin }
-    let(:params) { { email: user_invitation.email } }
+    let(:params) { { url: url, email: user_invitation.email } }
 
     context 'when user not exist' do
       it 'creates user invitation link' do
@@ -35,7 +36,7 @@ RSpec.describe UserInvitations::Operation::Create do
       let(:current_user) { admin }
 
       context 'when email is empty' do
-        let(:params) { { } }
+        let(:params) { { url: url } }
         let(:errors) { { email: ['Email can’t be blank', 'Email must be unique'] } }
 
         it 'has validation errors' do
@@ -47,7 +48,7 @@ RSpec.describe UserInvitations::Operation::Create do
       end
 
       context "when email doesn't match regex" do
-        let(:params) { { email: 'wrong_email' } }
+        let(:params) { { url: url, email: 'wrong_email' } }
         let(:errors) { { email: ['Wrong email format'] } }
 
         it 'has validation errors' do
@@ -59,7 +60,7 @@ RSpec.describe UserInvitations::Operation::Create do
       end
 
       context 'when user already exists' do
-        let(:params) { { email: not_admin_user.email } }
+        let(:params) { { url: url, email: admin.email } }
         let(:errors) { { base: ['User with such email already exists'] } }
 
         it 'has validation errors' do
@@ -69,11 +70,23 @@ RSpec.describe UserInvitations::Operation::Create do
 
         it_behaves_like 'token and mailer'
       end
+
+      context 'when url not specified' do
+        let(:params) { { email: user_invitation.email } }
+        let(:errors) { { url: ['Url can’t be blank'] } }
+
+        it 'has validation errors' do
+          expect(result['result.contract.default'].errors.messages).to match errors
+          expect(result).to be_failure
+        end
+
+        it_behaves_like 'token and mailer'
+      end
     end
 
     context 'user is not an andmin' do
       let(:current_user) { not_admin_user }
-      let(:params) { { email: FFaker::Internet.email } }
+      let(:params) { { url: url, email: FFaker::Internet.email } }
 
       it 'fails' do
         expect(result['result.contract.default']).to be_nil

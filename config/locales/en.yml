@@ -16,11 +16,13 @@ en:
       user_password:
         eql?: must match password
       user_email:
-        filled?: Email can’t be blank
-        format?: Wrong email format
         rules:
           email:
             unique?: Email must be unique
+            filled?: Email can’t be blank
+            format?: Wrong email format
+          url:
+            filled?: Url can’t be blank
       create_user:
         rules:
           first_name:

@@ -3,23 +3,23 @@
 class UserMailer < ApplicationMailer
   default site: 'example.stub'
 
-  def reset_password(user, token)
+  def reset_password(user, url, token)
     @user = user
-    @link = token_link(token, :reset_password)
+    @link = token_link(token, url)
     mail(to: @user.email,
          subject: I18n.t('user_mailer.reset_password.subject'))
   end
 
-  def invite_user(user, token)
+  def invite_user(user, url, token)
     @user = user
-    @link = token_link(token, :user_invitation)
+    @link = token_link(token, url)
     mail(to: @user.email,
          subject: I18n.t('user_mailer.invite_user.subject'))
   end
 
   private
 
-  def token_link(token, path)
-    URI.parse("#{Rails.application.config.client_url}/#{path}?token=#{token}").to_s
+  def token_link(token, url)
+    URI.parse("#{url}?token=#{token}").to_s
   end
 end

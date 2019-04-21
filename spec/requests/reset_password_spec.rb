@@ -54,12 +54,13 @@ RSpec.describe 'ResetPasswords', type: :request do
     include ApiDoc::ResetPassword::Create
 
     let(:user) { create(:user) }
+    let(:url) { 'https://url' }
 
     before { post '/reset_password', params: params, as: :json }
 
     describe 'Success' do
       context 'when email registered' do
-        let(:params) { { email: user.email } }
+        let(:params) { { email: user.email, url: url } }
 
         it 'creates restore_password_token', :dox do
           expect(response).to be_created
@@ -68,7 +69,7 @@ RSpec.describe 'ResetPasswords', type: :request do
       end
 
       context "when email doesn't exist" do
-        let(:params) { { email: 'not_existing_email@mail.com' } }
+        let(:params) { { email: 'not_existing_email@mail.com', url: url } }
 
         it 'renders errors', :dox do
           expect(response).to be_created
@@ -79,7 +80,16 @@ RSpec.describe 'ResetPasswords', type: :request do
 
     describe 'Fail' do
       context "when email doesn't match regex" do
-        let(:params) { { email: 'wrong_email' } }
+        let(:params) { { email: 'wrong_email', url: url } }
+
+        it 'renders errors', :dox do
+          expect(response).to be_unprocessable
+          expect(response).to match_json_schema('errors')
+        end
+      end
+
+      context 'when url not specified' do
+        let(:params) { { email: user.email } }
 
         it 'renders errors', :dox do
           expect(response).to be_unprocessable

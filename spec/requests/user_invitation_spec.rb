@@ -10,7 +10,7 @@ RSpec.describe 'UserInvitation', type: :request do
     let(:user) { create(:user, is_admin: false) }
     let(:email) { FFaker::Internet.email }
     let(:headers) { authorization_header_for(current_user) }
-    let(:params) { { email: email } }
+    let(:params) { { url: 'url', email: email } }
 
     before { post '/user_invitation', params: params, headers: headers }
 

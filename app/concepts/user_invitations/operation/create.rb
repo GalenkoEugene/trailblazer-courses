@@ -24,8 +24,8 @@ module UserInvitations::Operation
       ctx[:errors] = { base: [I18n.t('errors.user_invitations.already_exists')] }
     end
 
-    def send_user_invitation(_ctx, model:, token:, **)
-      UserMailer.invite_user(model, token).deliver_later
+    def send_user_invitation(_ctx, model:, params:, token:, **)
+      UserMailer.invite_user(model, params[:url], token).deliver_later
     end
   end
 end

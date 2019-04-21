@@ -11,8 +11,8 @@ module ResetPasswords::Operation
     step Lib::TokenCreator::ResetPassword
     step :send_restore_password_instructions
 
-    def send_restore_password_instructions(_ctx, model:, token:, **)
-      UserMailer.reset_password(model, token).deliver_later
+    def send_restore_password_instructions(_ctx, model:, params:, token:, **)
+      UserMailer.reset_password(model, params[:url], token).deliver_later
     end
   end
 end

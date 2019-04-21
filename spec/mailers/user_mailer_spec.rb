@@ -12,12 +12,13 @@ RSpec.describe UserMailer, type: :mailer do
   end
 
   describe '.reset_password' do
+    let(:url) { 'https://reset_password_url' }
     let(:mail) do
-      described_class.reset_password(user, token)
+      described_class.reset_password(user, url, token)
     end
 
     let(:token) { Service::JWTAdapter.encode(aud: 'reset_password', sub: user.id, exp: 1.day.from_now.to_i) }
-    let(:link) { "#{Rails.application.config.client_url}/reset_password?token=#{token}" }
+    let(:link) { "#{url}?token=#{token}" }
 
     it_behaves_like 'mail with correct headers' do
       let(:mail_subject) { I18n.t('user_mailer.reset_password.subject') }
@@ -29,12 +30,13 @@ RSpec.describe UserMailer, type: :mailer do
   end
 
   describe '.invite_user' do
+    let(:url) { 'https://invite_user_url' }
     let(:mail) do
-      described_class.invite_user(user, token)
+      described_class.invite_user(user, url, token)
     end
 
     let(:token) { Service::JWTAdapter.encode(aud: 'user_invitation', sub: user.id, exp: 1.day.from_now.to_i) }
-    let(:link) { "#{Rails.application.config.client_url}/user_invitation?token=#{token}" }
+    let(:link) { "#{url}?token=#{token}" }
 
     it_behaves_like 'mail with correct headers' do
       let(:mail_subject) { I18n.t('user_mailer.invite_user.subject') }
