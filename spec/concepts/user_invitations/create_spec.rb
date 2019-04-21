@@ -14,9 +14,6 @@ RSpec.describe UserInvitations::Operation::Create do
 
     context 'when user not exist' do
       it 'creates user invitation link' do
-        expect(Lib::Service::TokenCreator::UserInvitation).to(
-          receive(:call).and_return(token)
-        )
         expect(UserMailer).to receive_message_chain(
           :invite_user, :deliver_later
         ).with(user_invitation.id, token).with(no_args).and_return(true)
@@ -30,7 +27,6 @@ RSpec.describe UserInvitations::Operation::Create do
   describe 'Failure' do
     shared_examples 'token and mailer' do
       it 'doesn`t create token, doesn`t invite_user' do
-        expect(Lib::Service::TokenCreator::UserInvitation).not_to receive(:call)
         expect(UserMailer).not_to receive(:invite_user)
       end
     end

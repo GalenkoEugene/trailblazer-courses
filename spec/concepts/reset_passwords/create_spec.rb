@@ -10,9 +10,6 @@ RSpec.describe ResetPasswords::Operation::Create do
   describe 'Success' do
     context 'when user exists' do
       it 'creates restore password link' do
-        expect(Lib::Service::TokenCreator::ResetPassword).to(
-          receive(:call).with(user).and_return(token)
-        )
         expect(UserMailer).to receive_message_chain(
           :reset_password, :deliver_later
         ).with(user.id, token).with(no_args).and_return(true)
@@ -26,7 +23,6 @@ RSpec.describe ResetPasswords::Operation::Create do
       let(:params) { { email: 'not@exist.com' } }
 
       it 'silently succeeds' do
-        expect(Lib::Service::TokenCreator::ResetPassword).not_to receive(:call)
         expect(UserMailer).not_to receive(:reset_password)
         expect(result['result.model']).to be_failure
         expect(result[:model]).to eq(nil)
